@@ -1,43 +1,26 @@
+const TEST_WIDTHS = [375, 480, 720, 1280, 1440, 1920];
+let scrollToBottom = require("scroll-to-bottomjs");
+
 describe('TodoMVC', function() {
   beforeEach(function() {
     // Load our app before starting each test case
-    cy.visit('localhost:8000')
+    cy.viewport(1440, 900)
+    cy.visit('https://auth.t7r.dev/?response_type=code&client_id=marcoapptestdev-7c1837&scope=info%20accounts%20balance%20cards%20transactions%20direct_debits%20standing_orders%20offline_access&redirect_uri=https://console.t7r.dev/redirect-page&providers=uk-ob-all%20uk-oauth-all')
+    
   })
 
   it('Loads the TodoMVC app', function() {
-    cy.get('.todoapp').should('exist')
-    cy.percySnapshot()
+  cy.wait(25000)
+  cy.percySnapshot("P1",{widths: TEST_WIDTHS})
+  cy.wait(25000)
+  cy.contains('Barclays').click();  
+  cy.percySnapshot("P2",{widths: TEST_WIDTHS})
+  cy.contains('Barclays').click();  
+  cy.wait(10000)
+  cy.percySnapshot("P3",{widths: TEST_WIDTHS})
+  cy.wait(5000)
+
   })
 
-  it('With no todos, hides main section and footer', function() {
-    cy.get('.main').should('not.be.visible');
-    cy.get('.footer').should('not.be.visible');
-  })
 
-  it('Accepts a new todo', function() {
-    // Before adding a todo, we should have none.
-    cy.get('.todo-count').should('contain', '0 items left')
-    cy.get('.todo-list').children('li').should('have.length', 0)
-
-    // Add a new todo item.
-    cy.get('.new-todo').should('exist')
-    cy.get('.new-todo').type('New fancy todo {enter}')
-    // Take a Percy snapshot with different browser widths.
-    cy.percySnapshot('New todo test')
-
-    // We should have 1 todo item showing in the todo list and the footer.
-    cy.get('.todo-list').children('li').should('have.length', 1)
-    cy.get('.todo-count').should('contain', '1 item left')
-  })
-
-  it('Lets you check off a todo', function() {
-    // Enter a new todo.
-    cy.get('.new-todo').type('A thing to accomplish {enter}')
-    cy.get('.todo-count').should('contain', '1 item left')
-
-    // Click it off -- it should be marked as completed.
-    cy.get('.toggle').click()
-    cy.get('.todo-count').should('contain', '0 items left')
-    cy.percySnapshot()
-  })
 })
